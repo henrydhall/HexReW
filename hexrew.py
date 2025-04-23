@@ -27,7 +27,7 @@ def create_file(filename, contents):
         wf.write(contents)
 
 
-def over_write_file(filename, contents: int):
+def over_write_file(filename, contents: list[int]):
     with open(filename, 'wb') as wf:
         contents = bytearray(contents)
         wf.write(contents)

@@ -193,10 +193,14 @@ PLANTS = [
     'LEFT_FACING_REPEATER',
 ]
 
+PLANT = 0x0
 GARDEN_LOCATION = 0x4  # 0x0 Zen Garden, 0x01 Mushroom, 0x02 wheel barrow, 0x03 aquarium
 COLUMN = 0x8  # 0-7
 ROW = 0xC  # 0-3
 FACING = 0x10  # 0x0 right, 0x1 left
 LAST_WATER = 0x18  # unix timestamp
+PLANT_COLOR = 0x20
+FERTILIZED_COUNT = 0x24
 
 GARDENS = ['Zen Garden', 'Mushroom Garden', 'Wheel Barrow', 'Aquarium']
+DIRECTIONS = ['RIGHT', 'LEFT']
