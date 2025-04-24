@@ -1,5 +1,7 @@
 """Some stuff for messing around with a Plants vs. Zombies save file."""
 
+from collections import defaultdict
+
 import hexrew
 import pvz_const
 
@@ -9,6 +11,7 @@ class PvZParser:
 
     def __init__(self, save_file):
         self.file = hexrew.read_file(save_file)
+        self.plants = self.get_plants()
 
     def get_money(self):
         """Return the amount of money in the save."""
@@ -60,6 +63,41 @@ class PvZParser:
         """Write self.file to file_name."""
         hexrew.create_file(file_name, self.file)
 
+    def write_save_file(self, file_name) -> None:
+        """Overwrite save file."""
+        hexrew.over_write_file(file_name, self.file)
+
+    def get_blank_space(self) -> tuple:
+        """Get a free space in the Zen Garden"""
+        new_pos = None
+        for i in range(0,8):
+            for j in range(0,4):
+                if (i,j) not in self.plants:
+                    return (i,j)
+        else:
+            raise IndexError('No free space in Zen Garden')
+
+    def new_plant(self, plant_type, aquatic = False) -> None:
+        """Put in a new plant in a new place."""
+        new_bytes = [0 for i in range(0, 0x58)]
+
+        new_pos = self.get_blank_space()
+
+        new_bytes[0] = plant_type
+        new_bytes[pvz_const.COLUMN] = new_pos[0]
+        new_bytes[pvz_const.ROW] = new_pos[1]
+        new_bytes[pvz_const.FERTILIZED_COUNT] = 1
+        if not aquatic:
+            new_bytes[pvz_const.WATER_REQUIREMENT] = 3
+        self.file.extend(new_bytes)
+        self.file[pvz_const.ZEN_GARDEN_COUNT] = self.file[pvz_const.ZEN_GARDEN_COUNT] + 1
+    
+    def get_plants(self) -> dict[tuple]:
+        """Make a dictionary of the plants."""
+        plants = defaultdict(int)
+        for i in range(self.get_attribute(pvz_const.ZEN_GARDEN_COUNT)):
+            plants[self.get_plant_location(i)] = self.get_plant(i)
+        return plants
 
 if __name__ == '__main__':
     my_parser = PvZParser('user1.dat')
@@ -70,11 +108,12 @@ if __name__ == '__main__':
     print()
     for i in range(my_parser.get_attribute(pvz_const.ZEN_GARDEN_COUNT)):
         print(
-            my_parser.get_plant(i) + ':', 
-            my_parser.get_plant_garden(i), 
+            my_parser.get_plant(i) + ':',
+            my_parser.get_plant_garden(i),
             my_parser.get_plant_direction(i),
             my_parser.get_plant_location(i),
             my_parser.get_plant_attribute(i,pvz_const.FERTILIZED_COUNT)
-            )        
+            )
     my_parser.max_money()
-    my_parser.create_save_file('new.dat')
+    my_parser.new_plant(0x0F)
+    my_parser.write_save_file('new.dat')

@@ -201,6 +201,7 @@ FACING = 0x10  # 0x0 right, 0x1 left
 LAST_WATER = 0x18  # unix timestamp
 PLANT_COLOR = 0x20
 FERTILIZED_COUNT = 0x24
+WATER_REQUIREMENT = 0x2C
 
 GARDENS = ['Zen Garden', 'Mushroom Garden', 'Wheel Barrow', 'Aquarium']
 DIRECTIONS = ['RIGHT', 'LEFT']
